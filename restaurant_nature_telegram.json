@@ -1,7 +1,7 @@
 {
   "name": "بيت الطبيعة",
-  "logo": "",
-  "logoImage": "bet.jpg",
+  "logo": "bet.jpg",
+  "logoImage": "",
   "telegramBotToken": "8147836738:AAHpL9XYayR2odVBblXMS-PE-RQSSB96LMA",
   "telegramChatId": "7016124895
 ",
