@@ -44,12 +44,12 @@
     .app {
       max-width: 420px;
       margin: 0 auto;
-      padding: 110px 16px 80px;
+      padding: 100px 16px 20px;
       position: relative;
       z-index: 1;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 8px;
       height: 100vh;
       overflow: hidden;
     }
@@ -75,7 +75,7 @@
       align-items: center;
       justify-content: center;
       background: var(--logo-background);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      box-shadow: var(--logo-shadow);
       font-size: 48px;
     }
 
@@ -94,9 +94,9 @@
       max-width: 388px;
       z-index: 100;
       padding: 10px 16px;
-      border-radius: 20px;
+      border-radius: var(--header-border-radius, 20px);
       background: var(--header-bg);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+      box-shadow: var(--header-shadow);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -104,15 +104,15 @@
     }
 
     .header-logo {
-      width: 70px;
-      height: 70px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
       background: var(--logo-background);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 36px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      font-size: 32px;
+      box-shadow: var(--logo-shadow);
       overflow: hidden;
     }
 
@@ -170,18 +170,18 @@
       font-size: 12px;
       font-weight: 900;
     }
-.categories {
-  height: 90px;          /* زي القديم */
-  padding: 0;             /* ممكن تخليه 0 أو 12px لو تحب */
-  border-radius: 24px;
-  overflow: hidden;
-  position: relative;
-  perspective: 1000px;
-  margin-top: 30px;
-}
 
- 
-
+    .categories {
+      height: 120px;
+      border-radius: var(--category-border-radius, 24px);
+      background: var(--categories-background);
+      padding: 0;
+      overflow: hidden;
+      position: relative;
+      perspective: 1000px;
+      margin-top: 30px;
+      box-shadow: var(--category-shadow);
+    }
 
     .categories .swiper {
       height: 100%;
@@ -221,7 +221,7 @@
       width: 48px;
       height: 48px;
       object-fit: contain;
-      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+      filter: var(--icon-shadow, drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3)));
     }
 
     .cat-name {
@@ -232,16 +232,16 @@
       letter-spacing: 0.03em;
     }
 
-   .products {
-  flex: 1;               /* خليه زي ما هو */
-  padding: 36px 0;       /* زي القديم */
-  border-radius: 24px;
-  overflow: hidden;
-  position: relative;
-  perspective: 1200px;
-  box-shadow: var(--products-shadow);
-}
-
+    .products {
+      flex: 1;
+      border-radius: var(--products-border-radius, 24px);
+      background: var(--products-background);
+      padding: 32px 0;
+      overflow: hidden;
+      position: relative;
+      perspective: 1200px;
+      box-shadow: var(--products-shadow);
+    }
 
     .products .swiper {
       height: 100%;
@@ -255,10 +255,10 @@
 
     .product-card {
       display: flex;
-      gap: 16px;
+      gap: 23px;
       align-items: center;
       padding: 12px 14px;
-      border-radius: 20px;
+      border-radius: var(--card-border-radius, 20px);
       transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
       transform-style: preserve-3d;
@@ -270,7 +270,7 @@
       height: 80px;
       border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      box-shadow: var(--product-image-shadow, 0 10px 30px rgba(0, 0, 0, 0.8));
       flex-shrink: 0;
     }
 
@@ -598,12 +598,51 @@
       display: block;
     }
 
-   
-      @media (max-height:640px) {
-  .categories { height: 100px } /* زي باقي الشاشات */
-  .cat-icon { width: 48px; height: 48px } /* حجم أيقونة زي الكبير */
-}
+    .weights-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
 
+    .weight-option {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .weight-option:active {
+      transform: scale(0.95);
+    }
+
+    .weight-option:hover {
+      border-color: var(--gold);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .weight-label {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .weight-price {
+      font-size: 18px;
+      font-weight: 900;
+      background: var(--price-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    @media (max-width: 400px) {
+      .product-card {
+        gap: 12px;
+      }
+      
       .product-price {
         font-size: 16px;
       }
@@ -611,6 +650,36 @@
       .add-to-cart-btn {
         padding: 5px 10px;
         font-size: 11px;
+      }
+    }
+
+    @media (max-height: 640px) {
+      .app {
+        padding: 100px 16px 16px;
+      }
+
+      .header-title {
+        font-size: 20px;
+      }
+
+      .categories {
+        height: 90px;
+      }
+
+      .cat-icon {
+        width: 42px;
+        height: 42px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .products {
+        padding: 36px 0;
+      }
+
+      .product-card {
+        padding: 14px 16px;
+        gap: 14px;
       }
     }
   </style>
@@ -654,6 +723,14 @@
       <div id="cartContent">
         <div class="cart-empty">لا توجد منتجات في السلة</div>
       </div>
+    </div>
+  </div>
+
+  <div class="modal" id="weightsModal">
+    <div class="modal-content">
+      <button class="modal-close" id="closeWeights">✕</button>
+      <h2 style="margin-bottom: 16px; font-size: 20px;" id="weightsProductName"></h2>
+      <div id="weightsOptions"></div>
     </div>
   </div>
 
@@ -702,7 +779,7 @@
     }
 
     let activeCardBg = 'rgba(255, 255, 255, 0.1)';
-    let activeCardShadow = '0 20px 60px rgba(0, 0, 0, 0.95)';
+    let activeCardShadow = '0 20px 60px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.12)';
 
     function updateActiveCardStyles() {
       const t = restaurant.theme;
@@ -726,6 +803,8 @@
     function createProd(prod, index) {
       const slide = document.createElement('div');
       slide.className = 'swiper-slide';
+      const hasWeights = prod.weights && prod.weights.length > 0;
+      const buttonAction = hasWeights ? `showWeightsModal(${index})` : `addToCart(${index})`;
       slide.innerHTML = `<div class="product-card" data-index="${index}">
         <div class="product-image"><img src="${prod.image}" alt="${prod.name}" loading="lazy" decoding="async"></div>
         <div class="product-info">
@@ -733,8 +812,8 @@
           <div class="product-desc">${prod.description}</div>
         </div>
         <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
-          <div class="product-price">${prod.price} ج.م</div>
-          <button class="add-to-cart-btn" onclick="addToCart(${index})">إضافة +</button>
+          <div class="product-price">${hasWeights ? 'من ' : ''}${prod.price} ج.م</div>
+          <button class="add-to-cart-btn" onclick="${buttonAction}">${hasWeights ? 'اختر الكمية' : 'إضافة +'}</button>
         </div>
       </div>`;
       prodWrapper.appendChild(slide);
@@ -928,7 +1007,7 @@
       const cat = restaurant.categories[currentCat];
       const product = cat.products[index];
       
-      const existingItem = cart.find(item => item.id === product.id);
+      const existingItem = cart.find(item => item.id === product.id && !item.weight);
       if (existingItem) {
         existingItem.quantity++;
       } else {
@@ -945,6 +1024,53 @@
       playSound();
     }
 
+    function showWeightsModal(index) {
+      const cat = restaurant.categories[currentCat];
+      const product = cat.products[index];
+      
+      document.getElementById('weightsProductName').textContent = product.name;
+      
+      const optionsDiv = document.getElementById('weightsOptions');
+      optionsDiv.innerHTML = '<div class="weights-grid">' + 
+        product.weights.map((w, i) => `
+          <div class="weight-option" onclick="addToCartWithWeight(${index}, ${i})">
+            <div class="weight-label">${w.label}</div>
+            <div class="weight-price">${w.price} ج.م</div>
+          </div>
+        `).join('') + 
+        '</div>';
+      
+      document.getElementById('weightsModal').classList.add('active');
+      playSound();
+    }
+
+    function addToCartWithWeight(productIndex, weightIndex) {
+      const cat = restaurant.categories[currentCat];
+      const product = cat.products[productIndex];
+      const weight = product.weights[weightIndex];
+      
+      const existingItem = cart.find(item => 
+        item.id === product.id && item.weight === weight.label
+      );
+      
+      if (existingItem) {
+        existingItem.quantity++;
+      } else {
+        cart.push({
+          id: product.id,
+          name: product.name,
+          price: weight.price,
+          image: product.image,
+          quantity: 1,
+          weight: weight.label
+        });
+      }
+      
+      updateCartBadge();
+      playSound();
+      document.getElementById('weightsModal').classList.remove('active');
+    }
+
     function updateCartBadge() {
       const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
       const badge = document.getElementById('cartBadge');
@@ -958,8 +1084,10 @@
       }
     }
 
-    function removeFromCart(id) {
-      const index = cart.findIndex(item => item.id === id);
+    function removeFromCart(id, weight) {
+      const index = cart.findIndex(item => 
+        item.id === id && (weight ? item.weight === weight : !item.weight)
+      );
       if (index !== -1) {
         cart.splice(index, 1);
         updateCartBadge();
@@ -967,12 +1095,14 @@
       }
     }
 
-    function updateQuantity(id, change) {
-      const item = cart.find(item => item.id === id);
+    function updateQuantity(id, weight, change) {
+      const item = cart.find(item => 
+        item.id === id && (weight ? item.weight === weight : !item.weight)
+      );
       if (item) {
         item.quantity += change;
         if (item.quantity <= 0) {
-          removeFromCart(id);
+          removeFromCart(id, weight);
         } else {
           renderCart();
         }
@@ -997,14 +1127,14 @@
                 <img src="${item.image}" alt="${item.name}">
               </div>
               <div class="cart-item-info">
-                <div class="cart-item-name">${item.name}</div>
+                <div class="cart-item-name">${item.name}${item.weight ? ' - ' + item.weight : ''}</div>
                 <div class="cart-item-price">${item.price} ج.م × ${item.quantity}</div>
               </div>
               <div class="cart-item-actions">
-                <button class="qty-btn" onclick="updateQuantity(${item.id}, -1)">-</button>
+                <button class="qty-btn" onclick="updateQuantity(${item.id}, ${item.weight ? `'${item.weight}'` : 'null'}, -1)">-</button>
                 <span class="qty">${item.quantity}</span>
-                <button class="qty-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
-                <button class="remove-btn" onclick="removeFromCart(${item.id})">حذف</button>
+                <button class="qty-btn" onclick="updateQuantity(${item.id}, ${item.weight ? `'${item.weight}'` : 'null'}, 1)">+</button>
+                <button class="remove-btn" onclick="removeFromCart(${item.id}, ${item.weight ? `'${item.weight}'` : 'null'})">حذف</button>
               </div>
             </div>
           `).join('')}
@@ -1071,7 +1201,8 @@
       message += `📦 *تفاصيل الطلب:*\n`;
       
       cart.forEach(item => {
-        message += `• ${item.name} × ${item.quantity} = ${(item.price * item.quantity).toFixed(2)} ج.م\n`;
+        const itemName = item.weight ? `${item.name} (${item.weight})` : item.name;
+        message += `• ${itemName} × ${item.quantity} = ${(item.price * item.quantity).toFixed(2)} ج.م\n`;
       });
       
       message += `\n💰 *الإجمالي: ${total.toFixed(2)} ج.م*`;
@@ -1131,6 +1262,16 @@
     document.getElementById('cartModal').onclick = (e) => {
       if (e.target.id === 'cartModal') {
         document.getElementById('cartModal').classList.remove('active');
+      }
+    };
+
+    document.getElementById('closeWeights').onclick = () => {
+      document.getElementById('weightsModal').classList.remove('active');
+    };
+
+    document.getElementById('weightsModal').onclick = (e) => {
+      if (e.target.id === 'weightsModal') {
+        document.getElementById('weightsModal').classList.remove('active');
       }
     };
 
