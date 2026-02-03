@@ -775,7 +775,12 @@
     }
 
     function hideSplash() {
-      setTimeout(() => splash.classList.add('hidden'), 800);
+      if (!splash) return;
+      if (hideSplash._done) return;
+      hideSplash._done = true;
+      setTimeout(() => {
+        splash.classList.add('hidden');
+      }, 800);
     }
 
     let activeCardBg = 'rgba(255, 255, 255, 0.1)';
@@ -787,10 +792,19 @@
       activeCardShadow = t.activeCardShadow || '0 20px 60px rgba(0, 0, 0, 0.95)';
     }
 
-    let scheduleTimer;
+    let apply3DQueued = false;
+    let last3DArgs = null;
+
     function scheduleApply3D(swiper, isCat) {
-      if (scheduleTimer) cancelAnimationFrame(scheduleTimer);
-      scheduleTimer = requestAnimationFrame(() => apply3D(swiper, isCat));
+      if (!swiper || !swiper.slides || swiper.slides.length === 0) return;
+      last3DArgs = { swiper, isCat };
+      if (apply3DQueued) return;
+      apply3DQueued = true;
+      requestAnimationFrame(() => {
+        apply3DQueued = false;
+        if (!last3DArgs) return;
+        apply3D(last3DArgs.swiper, last3DArgs.isCat);
+      });
     }
 
     function createCat(cat) {
@@ -804,7 +818,7 @@
       const slide = document.createElement('div');
       slide.className = 'swiper-slide';
       const hasWeights = prod.weights && prod.weights.length > 0;
-      const buttonAction = hasWeights ? `showWeightsModal(${index})` : `addToCart(${index})`;
+      const buttonAction = hasWeights ? `window.showWeightsModal(${index})` : `window.addToCart(${index})`;
       slide.innerHTML = `<div class="product-card" data-index="${index}">
         <div class="product-image"><img src="${prod.image}" alt="${prod.name}" loading="lazy" decoding="async"></div>
         <div class="product-info">
@@ -895,11 +909,15 @@
         loopedSlides: cat.products.length * repeatTimes,
         speed: 350,
         allowTouchMove: true,
+        shortSwipes: true,
+        longSwipes: true,
+        longSwipesRatio: 0.3,
         grabCursor: true,
         touchRatio: 0.8,
         threshold: 9,
         resistance: false,
         watchSlidesProgress: true,
+        slideToClickedSlide: false,
         on: {
           init() { scheduleApply3D(this, false); },
           slideChange() {
@@ -907,7 +925,15 @@
             scheduleApply3D(this, false);
           },
           progress() { scheduleApply3D(this, false); },
-          setTranslate() { scheduleApply3D(this, false); }
+          setTranslate() { scheduleApply3D(this, false); },
+          tap(s, e) {
+            const sl = e.target.closest('.swiper-slide');
+            if (!sl) return;
+            if (!sl.classList.contains('swiper-slide-active')) {
+              const idx = Array.from(s.slides).indexOf(sl);
+              if (idx !== -1) s.slideTo(idx, 300);
+            }
+          }
         }
       });
 
@@ -971,6 +997,7 @@
         resistanceRatio: 0,
         watchSlidesProgress: true,
         slideToClickedSlide: true,
+        freeMode: false,
         threshold: 8,
         on: {
           init() { scheduleApply3D(this, true); },
@@ -1001,9 +1028,15 @@
 
       document.addEventListener('click', initAudio, { once: true, passive: true });
       document.addEventListener('touchstart', initAudio, { once: true, passive: true });
+
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && audioCtx) {
+          audioCtx.resume();
+        }
+      });
     }
 
-    function addToCart(index) {
+    window.addToCart = function(index) {
       const cat = restaurant.categories[currentCat];
       const product = cat.products[index];
       
@@ -1022,9 +1055,9 @@
       
       updateCartBadge();
       playSound();
-    }
+    };
 
-    function showWeightsModal(index) {
+    window.showWeightsModal = function(index) {
       const cat = restaurant.categories[currentCat];
       const product = cat.products[index];
       
@@ -1033,7 +1066,7 @@
       const optionsDiv = document.getElementById('weightsOptions');
       optionsDiv.innerHTML = '<div class="weights-grid">' + 
         product.weights.map((w, i) => `
-          <div class="weight-option" onclick="addToCartWithWeight(${index}, ${i})">
+          <div class="weight-option" onclick="window.addToCartWithWeight(${index}, ${i})">
             <div class="weight-label">${w.label}</div>
             <div class="weight-price">${w.price} ج.م</div>
           </div>
@@ -1042,9 +1075,9 @@
       
       document.getElementById('weightsModal').classList.add('active');
       playSound();
-    }
+    };
 
-    function addToCartWithWeight(productIndex, weightIndex) {
+    window.addToCartWithWeight = function(productIndex, weightIndex) {
       const cat = restaurant.categories[currentCat];
       const product = cat.products[productIndex];
       const weight = product.weights[weightIndex];
@@ -1069,7 +1102,7 @@
       updateCartBadge();
       playSound();
       document.getElementById('weightsModal').classList.remove('active');
-    }
+    };
 
     function updateCartBadge() {
       const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -1084,7 +1117,7 @@
       }
     }
 
-    function removeFromCart(id, weight) {
+    window.removeFromCart = function(id, weight) {
       const index = cart.findIndex(item => 
         item.id === id && (weight ? item.weight === weight : !item.weight)
       );
@@ -1093,21 +1126,21 @@
         updateCartBadge();
         renderCart();
       }
-    }
+    };
 
-    function updateQuantity(id, weight, change) {
+    window.updateQuantity = function(id, weight, change) {
       const item = cart.find(item => 
         item.id === id && (weight ? item.weight === weight : !item.weight)
       );
       if (item) {
         item.quantity += change;
         if (item.quantity <= 0) {
-          removeFromCart(id, weight);
+          window.removeFromCart(id, weight);
         } else {
           renderCart();
         }
       }
-    }
+    };
 
     function renderCart() {
       const content = document.getElementById('cartContent');
@@ -1131,10 +1164,10 @@
                 <div class="cart-item-price">${item.price} ج.م × ${item.quantity}</div>
               </div>
               <div class="cart-item-actions">
-                <button class="qty-btn" onclick="updateQuantity(${item.id}, ${item.weight ? `'${item.weight}'` : 'null'}, -1)">-</button>
+                <button class="qty-btn" onclick="window.updateQuantity(${item.id}, ${item.weight ? `'${item.weight}'` : 'null'}, -1)">-</button>
                 <span class="qty">${item.quantity}</span>
-                <button class="qty-btn" onclick="updateQuantity(${item.id}, ${item.weight ? `'${item.weight}'` : 'null'}, 1)">+</button>
-                <button class="remove-btn" onclick="removeFromCart(${item.id}, ${item.weight ? `'${item.weight}'` : 'null'})">حذف</button>
+                <button class="qty-btn" onclick="window.updateQuantity(${item.id}, ${item.weight ? `'${item.weight}'` : 'null'}, 1)">+</button>
+                <button class="remove-btn" onclick="window.removeFromCart(${item.id}, ${item.weight ? `'${item.weight}'` : 'null'})">حذف</button>
               </div>
             </div>
           `).join('')}
