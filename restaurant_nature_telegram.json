@@ -1,9 +1,10 @@
 {
   "name": "بيت الطبيعة",
-  "logo": "🌿",
+  "logo": "",
   "logoImage": "",
-  "telegramBotToken": "YOUR_BOT_TOKEN_HERE",
-  "telegramChatId": "YOUR_CHAT_ID_HERE",
+  "telegramBotToken": "8147836738:AAHpL9XYayR2odVBblXMS-PE-RQSSB96LMA",
+  "telegramChatId": "7016124895
+",
   "theme": {
     "bg": "#0a1f0f",
     "text": "#e8f5e9",
